@@ -8,33 +8,14 @@ class Node:
 
     def __lt__(self, other):
         return self.frequency < other.frequency
+    
+    def print_tree(self, prefix="", is_left=True):
+        if self.right is not None:
+            self.right.print_tree(prefix + ("│   " if is_left else "    "), False)
+        print(prefix + ("└── " if is_left else "┌── ") + str(self.char) + ":" + str(self.frequency))
+        if self.left is not None:
+            self.left.print_tree(prefix + ("    " if is_left else "│   "), True)
 
-#     def insert(self, data):
-# # Compare the new value with the parent node
-#         if self.data:
-#            if data < self.data:
-#               if self.left is None:
-#                  self.left = Node(data)
-#               else:
-#                  self.left.insert(data)
-#            elif data > self.data:
-#                  if self.right is None:
-#                     self.right = Node(data)
-#                  else:
-#                     self.right.insert(data)
-#         else:
-#            self.data = data
-
-# Print the tree
-    def PrintTree(self):
-        if self.left:
-           self.left.PrintTree()
-        print( self.data),
-        if self.right:
-           self.right.PrintTree()
-
-
-class Haffman:
     def getLetterCount(message):
         # Returns a dictionary with keys of single letters and values of the
         # count of how many times they appear in the message parameter.
@@ -48,18 +29,30 @@ class Haffman:
             'Щ': 0, 'Ъ': 0, 'Ы': 0, 'Ь': 0, 'Э': 0, 'Ю': 0, 'Я': 0, 'а': 0, 'б': 0, 'в': 0, 'г': 0, 'д': 0, 'е': 0,
             'ё': 0, 'ж': 0, 'з': 0, 'и': 0, 'й': 0, 'к': 0, 'л': 0, 'м': 0, 'н': 0, 'о': 0, 'п': 0, 'р': 0, 'с': 0,
             'т': 0, 'у': 0, 'ф': 0, 'х': 0, 'ц': 0, 'ч': 0, 'ш': 0, 'щ': 0, 'ъ': 0, 'ы': 0, 'ь': 0, 'э': 0, 'ю': 0,
-            'я': 0
+            'я': 0, '!':0, ' ':0, ',':0, '.':0, '-':0, ':':0, '?':0, ';':0, '\"':0, '\n':0, '\'':0
         }
         for letter in message:
             if letter in letterCount:
                 letterCount[letter] += 1
 
-        # return letterCount
-   
-    # def sort_dict(dictionary):
         non_empty_list = dict([(k,v) for k,v in letterCount.items() if v])
         sorted_non_empty_list = dict(sorted(non_empty_list.items(), key=lambda x:x[1]))
         return sorted_non_empty_list
+    
+
+    # The last remaining node is the root of the Huffman tree
+
+    def huffman_codes(node, code="", mapping=None):
+        if mapping is None:
+            mapping = {}
+
+        if node is not None:
+            if node.char is not None:
+                mapping[node.char] = code
+            Node.huffman_codes(node.left, code + "0", mapping)
+            Node.huffman_codes(node.right, code + "1", mapping)
+
+        return mapping
     
     def build_huffman_tree(frequency_dict):
         # Create a priority queue (min heap) to store nodes
@@ -71,46 +64,52 @@ class Haffman:
             left_child = heapq.heappop(heap)
             right_child = heapq.heappop(heap)
 
-            # Create a new node with the combined frequency
+                # Create a new node with the combined frequency
             combined_frequency = left_child.frequency + right_child.frequency
             internal_node = Node(frequency=combined_frequency)
 
-            # Set the left and right children
+                # Set the left and right children
             internal_node.left = left_child
             internal_node.right = right_child
 
-        # Add the new internal node back to the heap
+            # Add the new internal node back to the heap
             heapq.heappush(heap, internal_node)
-
-    # The last remaining node is the root of the Huffman tree
+    
         return heap[0]
 
-    def huffman_codes(node, code="", mapping=None):
-        if mapping is None:
-            mapping = {}
 
-        if node is not None:
-            if node.char is not None:
-                mapping[node.char] = code
-            Haffman.huffman_codes(node.left, code + "0", mapping)
-            Haffman.huffman_codes(node.right, code + "1", mapping)
+def encode_message(message, huffman_codes):
+    encoded_message = ""
+    for char in message:
+        encoded_message += huffman_codes[char]
+    return encoded_message
 
-        return mapping
-    
-# Use the insert method to add nodes
-# root = Node(12)
-# root.insert(6)
-# root.insert(14)
-# root.insert(3)
-# root.PrintTree()
+def decode_message(encoded_message, huffman_tree):
+    decoded_message = ""
+    current_node = huffman_tree
 
-aboab= "Certainly! Here is the dictionary printed as a string:"
-# # print(Haffman.getLetterCount(aboab))
-print(Haffman.getLetterCount(aboab))
+    for bit in encoded_message:
+        if bit == '0':
+            current_node = current_node.left
+        else:
+            current_node = current_node.right
 
+        if current_node.char is not None:
+            decoded_message += current_node.char
+            current_node = huffman_tree  # Reset to the root for the next character
 
-huffman_tree_root = Haffman.build_huffman_tree(Haffman.getLetterCount(aboab))
-huffman_codes_mapping = Haffman.huffman_codes(huffman_tree_root)
+    return decoded_message
+
+txt = open('file.txt', 'r').read()
+
+huffman_tree_root = Node.build_huffman_tree(Node.getLetterCount(txt))
+huffman_tree_root.print_tree()
+huffman_codes_mapping = Node.huffman_codes(huffman_tree_root)
+
+enc_aboba = encode_message(txt, huffman_codes_mapping)
+print(enc_aboba)
+print(decode_message(enc_aboba, huffman_tree_root))
+print(Node.getLetterCount(txt))
 
 print("Huffman Codes:")
 for char, code in huffman_codes_mapping.items():

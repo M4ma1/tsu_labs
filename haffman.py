@@ -27,10 +27,6 @@ class Node:
             
             else:
                 letterCount[letter] += 1
-            # if letter in letterCount:
-                # letterCount[letter] += 1
-            if letter =='?':
-                continue
 
         non_empty_list = dict([(k,v) for k,v in letterCount.items() if v])
         sorted_non_empty_list = dict(sorted(non_empty_list.items(), key=lambda x:x[1]))
@@ -75,18 +71,18 @@ class Node:
         return heap[0]
 
 
-def encode_message(message, huffman_codes):
+def encode_message_to_binary(message, huffman_codes):
     encoded_message = ""
     for char in message:
         encoded_message += huffman_codes[char]
-    return encoded_message
+    return bytes(encoded_message, 'utf-8')  # Encoding the message as bytes
 
-def decode_message(encoded_message, huffman_tree):
+def decode_message_from_binary(encoded_message, huffman_tree):
     decoded_message = ""
     current_node = huffman_tree
 
     for bit in encoded_message:
-        if bit == '0':
+        if bit == 48:
             current_node = current_node.left
         else:
             current_node = current_node.right
@@ -97,17 +93,34 @@ def decode_message(encoded_message, huffman_tree):
 
     return decoded_message
 
-txt = open('file.txt', 'r').read()
-huffman_tree_root = Node.build_huffman_tree(Node.getLetterCount(txt))
-huffman_tree_root.print_tree()
-huffman_codes_mapping = Node.huffman_codes(huffman_tree_root)
 
+if __name__ == "__main__":
+    huffman_tree_root = Node.build_huffman_tree(Node.getLetterCount('txt'))
+    huffman_codes_mapping = Node.huffman_codes(huffman_tree_root)
+    count = Node.getLetterCount('00')
+    while True:
+        print("[*]Would you like to (D)ecode, (E)ncode, (Ex)it")
+        inp = input()
 
-enc_aboba = encode_message(txt, huffman_codes_mapping)
-print(enc_aboba)
-print(decode_message(enc_aboba, huffman_tree_root))
-print(Node.getLetterCount(txt))
+        if inp == 'E':
+            txt = open('file.txt', 'r').read()
+            count = Node.getLetterCount(txt)
+            huffman_tree_root = Node.build_huffman_tree(count)
+            huffman_codes_mapping = Node.huffman_codes(huffman_tree_root)
+            with open("encoded", "wb") as file:  # Writing binary data to file
+                encoded_data = encode_message_to_binary(txt, huffman_codes_mapping)
+                file.write(encoded_data)
 
-print("Huffman Codes:")
-for char, code in huffman_codes_mapping.items():
-    print(f"{char}: {code}")
+        elif inp == 'D':
+            print("file to decode: ")
+            f = input()
+            with open(f, "rb") as file:  # Reading binary data from file
+                binary_data = file.read()
+                huffman_tree_root = Node.build_huffman_tree(count)
+                print(decode_message_from_binary(binary_data, huffman_tree_root))
+
+        elif inp == 'Ex':
+            break
+
+        else:
+            print("you misclicked")

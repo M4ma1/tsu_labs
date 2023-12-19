@@ -75,14 +75,27 @@ def encode_message_to_binary(message, huffman_codes):
     encoded_message = ""
     for char in message:
         encoded_message += huffman_codes[char]
-    return bytes(encoded_message, 'utf-8')  # Encoding the message as bytes
+
+    # Convert the binary string to an integer
+    encoded_integer = int(encoded_message, 2)
+
+    # Calculate the number of bytes required for the integer
+    num_bytes = (len(encoded_message) + 7) // 8
+
+    # Convert the integer to bytes
+    encoded_bytes = encoded_integer.to_bytes(num_bytes, byteorder='little')
+
+    return encoded_bytes
+
 
 def decode_message_from_binary(encoded_message, huffman_tree):
     decoded_message = ""
     current_node = huffman_tree
-
+    temp = int.from_bytes(encoded_message, 'little')
+    encoded_message = bin(temp)[2:]
+    # print(encoded_message)
     for bit in encoded_message:
-        if bit == 48:
+        if bit == "0":
             current_node = current_node.left
         else:
             current_node = current_node.right
@@ -109,6 +122,7 @@ if __name__ == "__main__":
             huffman_codes_mapping = Node.huffman_codes(huffman_tree_root)
             with open("encoded", "wb") as file:  # Writing binary data to file
                 encoded_data = encode_message_to_binary(txt, huffman_codes_mapping)
+                print(encoded_data)
                 file.write(encoded_data)
 
         elif inp == 'D':
@@ -117,7 +131,9 @@ if __name__ == "__main__":
             with open(f, "rb") as file:  # Reading binary data from file
                 binary_data = file.read()
                 huffman_tree_root = Node.build_huffman_tree(count)
-                print(decode_message_from_binary(binary_data, huffman_tree_root))
+                with open("decoded", "w") as file:
+                    file.write(decode_message_from_binary(binary_data, huffman_tree_root))
+                # print(decode_message_from_binary(binary_data, huffman_tree_root))
 
         elif inp == 'Ex':
             break

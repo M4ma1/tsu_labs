@@ -93,7 +93,6 @@ def decode_message_from_binary(encoded_message, huffman_tree):
     current_node = huffman_tree
     temp = int.from_bytes(encoded_message, 'little')
     encoded_message = bin(temp)[2:]
-    # print(encoded_message)
     for bit in encoded_message:
         if bit == "0":
             current_node = current_node.left
@@ -122,7 +121,6 @@ if __name__ == "__main__":
             huffman_codes_mapping = Node.huffman_codes(huffman_tree_root)
             with open("encoded", "wb") as file:  # Writing binary data to file
                 encoded_data = encode_message_to_binary(txt, huffman_codes_mapping)
-                print(encoded_data)
                 file.write(encoded_data)
 
         elif inp == 'D':
@@ -133,7 +131,6 @@ if __name__ == "__main__":
                 huffman_tree_root = Node.build_huffman_tree(count)
                 with open("decoded", "w") as file:
                     file.write(decode_message_from_binary(binary_data, huffman_tree_root))
-                # print(decode_message_from_binary(binary_data, huffman_tree_root))
 
         elif inp == 'Ex':
             break

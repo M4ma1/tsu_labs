@@ -1,7 +1,7 @@
 current_byte = 0
 read_bit = 0
 byte_len = 8
-bit_len = 0
+bit_len = 8
 garbage_bit_count = 0
 
 def character_counter(text):
@@ -36,9 +36,6 @@ def write_bits_and_follow(bit, bit_to_follow, file):
     while bit_to_follow:
         write_bit(bit ^ 1, file)
         bit_to_follow -= 1
-
-current_byte = 0
-bit_len = 8
 
 def find_index_for_symbol(symbols, target_symbol):
     index = 0

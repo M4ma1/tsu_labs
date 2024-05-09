@@ -2,21 +2,14 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": ".NET Core Attach",
-      "type": "coreclr",
-      "request": "attach"
-    },
-
-
-    {
       "name": "C/C++ Runner: Debug Session",
       "type": "cppdbg",
       "request": "launch",
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/home/rus1k/Documents/2_semester",
-      "program": "/home/rus1k/Documents/2_semester/build/Debug/outDebug",
+      "cwd": "/home/rus1k/Documents/tsu_labs/Programing_Languages_And_Algorithms_And_Data_Structure_2_semester/big-int",
+      "program": "/home/rus1k/Documents/tsu_labs/Programing_Languages_And_Algorithms_And_Data_Structure_2_semester/big-int/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

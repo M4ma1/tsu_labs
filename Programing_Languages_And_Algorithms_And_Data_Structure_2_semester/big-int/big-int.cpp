@@ -6,9 +6,9 @@
 
 using namespace std;
 
-typedef unsigned int BASE;
+typedef unsigned char BASE;
 #define BASE_SIZE (sizeof(BASE)*8)
-typedef unsigned long long DBASE;
+typedef unsigned short DBASE;
 #define DBASE_SIZE (sizeof(DBASE)*8)
 
 
@@ -79,6 +79,7 @@ class BigInt{
         }
         
         friend ostream &operator << (ostream& out, const BigInt &res){
+            out << "---------------------------------------------" << endl;
             out << "Maxlen:" << res.maxlen << "\n";
             out << "len:" << res.n << "\n";
             // Initialize the shift value to the number of bits in BASE minus 4
@@ -104,6 +105,7 @@ class BigInt{
                     out << " ";
                 }
             }
+            out << endl << "---------------------------------------------" << endl;
             return out;
         }
 
@@ -167,14 +169,160 @@ class BigInt{
         void output (int c=10); 
 };
 
-// BigInt BigInt::operator% (const BigInt& obj){
-    
-// }
+BigInt BigInt::operator% (const BigInt& obj){
 
-// BigInt BigInt::operator/ (const BigInt& obj){
-//     BASE d = (1 << BASE_SIZE)/(obj.coef[n-1]+1);
-    
-// }
+    if (obj.n == 1 &&  obj.coef[0] == 0){
+        throw std::invalid_argument("can not devide by 0");
+    }
+
+    if (*this < obj){
+        return *this;
+    }
+
+    if (obj.n == 1){
+        return *this % obj.coef[0];
+    }
+
+    if (*this == obj){
+        BigInt res(1, 0);
+        return res;
+    }
+
+    BigInt tmp(1, 0), new_obj(obj.n, 0);
+    BASE m = n - obj.n, q_tmp, r_tmp;
+
+    DBASE base=(DBASE)(1 << BASE_SIZE);
+    BASE d = (int)(base/(obj.coef[obj.n-1]+1));
+
+    // normalization
+    tmp = *this * d;
+    if (d == 1){
+        tmp.n = n+1;
+        tmp.coef[n] = 0;
+    }
+    new_obj = obj;
+    new_obj = new_obj * d;
+
+    for (int i=m; i>=0; i--){
+
+        // computing q'
+        q_tmp = (int)((tmp.coef[i+new_obj.n] * base + tmp.coef[i+new_obj.n-1]) / new_obj.coef[new_obj.n-1]);
+
+        r_tmp = (tmp.coef[i+new_obj.n] * base + tmp.coef[i+new_obj.n-1]) % new_obj.coef[new_obj.n-1];
+        if (q_tmp == base || q_tmp * new_obj.coef[n-2] > base * r_tmp + tmp.coef[i+new_obj.n-2]){
+            q_tmp--;
+            r_tmp = r_tmp + new_obj.coef[new_obj.n-1];
+            if (r_tmp < base){
+                if (q_tmp == base || q_tmp * new_obj.coef[n-2] > base *r_tmp + tmp.coef[i+new_obj.n-2]){
+                    q_tmp--;
+                }
+            }
+        }
+
+        BigInt u(new_obj.n + 1);
+        u.n = new_obj.n + 1;
+        for (int j = 0; j < new_obj.n + 1; j++) {
+            u.coef[j] = tmp.coef[j+i];
+        }
+
+        BigInt product = new_obj*static_cast<BASE>(q_tmp);
+        if (u < product) {
+            q_tmp--;
+            product = product - new_obj;
+        }
+
+        u = u - product;            
+
+        for (int j = 0; j < new_obj.n + 1; j++) {
+            tmp.coef[j+i] = u.coef[j];
+        }
+
+    }
+
+    // denormalization
+    tmp = tmp / d;
+    return tmp;
+}
+
+BigInt BigInt::operator/ (const BigInt& obj){
+
+    if (obj.n == 1 &&  obj.coef[0] == 0){
+        throw std::invalid_argument("can not devide by 0");
+    }
+
+    if (*this < obj){
+        BigInt res(1, 0);
+        return res;
+    }
+
+    if (obj.n == 1){
+        return *this / obj.coef[0];
+    }
+
+    if (*this == obj){
+        BigInt res(1, 0);
+        res.coef[0] = 1;
+        return res;
+    }
+
+    BigInt tmp(1, 0), new_obj(obj.n, 0);
+    BASE m = n - obj.n, q_tmp, r_tmp;
+    BigInt res(m, 0);
+    DBASE base=(DBASE)(1 << BASE_SIZE);
+    BASE d = (int)(base/(obj.coef[obj.n-1]+1));
+
+    // normalization
+    tmp = *this * d;
+    if (d == 1){
+        tmp.n = n+1;
+        tmp.coef[n] = 0;
+    }
+    new_obj = obj;
+    new_obj = new_obj * d;
+
+    for (int i=m; i>=0; i--){
+
+        // computing q'
+        q_tmp = (int)((tmp.coef[i+new_obj.n] << BASE_SIZE + tmp.coef[i+new_obj.n-1]) / new_obj.coef[new_obj.n-1]);
+
+        r_tmp = (tmp.coef[i+new_obj.n] << BASE_SIZE + tmp.coef[i+new_obj.n-1]) % new_obj.coef[new_obj.n-1];
+        if (q_tmp == base || q_tmp * new_obj.coef[n-2] > r_tmp << BASE_SIZE + tmp.coef[i+new_obj.n-2]){
+            q_tmp--;
+            r_tmp = r_tmp + new_obj.coef[new_obj.n-1];
+            if (r_tmp < base){
+                if (q_tmp == base || q_tmp * new_obj.coef[n-2] > r_tmp << BASE_SIZE + tmp.coef[i+new_obj.n-2]){
+                    q_tmp--;
+                }
+            }
+        }
+
+        BigInt u(new_obj.n + 1);
+        u.n = new_obj.n + 1;
+        for (int j = 0; j < new_obj.n + 1; j++) {
+            u.coef[j] = tmp.coef[j+i];
+        }
+
+        BigInt product = new_obj*static_cast<BASE>(q_tmp);
+        if (u < product) {
+            q_tmp--;
+            product = product - new_obj;
+        }
+
+        u = u - product;
+        res.coef[i] = static_cast<BASE>(q_tmp);
+        res.n++;
+        for (int j = 0; j < new_obj.n + 1; j++) {
+            tmp.coef[j+i] = u.coef[j];
+        }
+
+    }
+
+    while(res.n>1 && res.coef[res.n-1]==0){
+        res.n--;
+    }
+
+    return res;
+}
 
 BigInt &BigInt::input (int base){
     string str; cout << "enter string: ", cin >> str;
@@ -213,7 +361,7 @@ BASE BigInt::operator% (BASE devisor){
 
 BigInt BigInt::operator* (BASE multiplier){
     DBASE tmp, carry=0;
-    BigInt res(n, 0);
+    BigInt res(n+1, 0);
     for(int i=0; i<n; i++){
         tmp = (DBASE)coef[i] * (DBASE)multiplier + (DBASE)carry;
         res.coef[i] = (BASE)tmp;
@@ -226,6 +374,11 @@ BigInt BigInt::operator* (BASE multiplier){
     else{
         res.n = n;
     }
+
+    while(res.n>1 && res.coef[res.n-1]==0){
+        res.n--;
+    }
+
     return res;
 }
 
@@ -407,39 +560,34 @@ BigInt &BigInt::operator= (const BigInt& obj){
     return *this;
 }
 
+void Test(){
+    int M = 1000;
+    int T = 1000;
+    int n,m;
+    BigInt A(1, 0), B(1, 0), C(1, 0), D(1, 0);
+    do
+    {
+        n = rand() % M + 1;
+        m = rand() % M + 1;
+
+        cout << "n: " << n << endl;
+        cout << "m: " << m << endl;
+        cout << "T: " << T << endl;
+
+        BigInt A(n, 1);
+        BigInt B(m, 1);
+        BigInt C = A/B;
+        BigInt D = A%B;
+
+        cout << "A == C*B+D: " << (A == C*B+D) << endl;
+        cout << "A-D == C*B: " << (A-D == C*B) << endl;
+        cout << "D<B: " << (D<B) << endl;
+        
+    } while (A == C*B+D && A-D == C*B && D<B && --T);
+}
+
 int main(){
     srand(time(NULL));
-    BigInt zxc(4, 1);
-    BigInt poi(4, 1);
-    int n,m;
-
-    // cout << "enter number len: ", cin >> n;
-    // BigInt asd(n, 1);
-    // cout << asd << endl;
-    // cout << "enter number len: ", cin >> m;
-    // BigInt qwe(m, 1);
-    // cout << qwe << endl;
-    // cout << "equality comparison: " << (qwe == asd) << endl;
-    // cout << "greater than comparison: " << (asd > qwe) << endl;
-    // cout << "less than comparison: " << (asd < qwe) << endl;
-    // zxc = qwe + asd;
-    // cout << "addition assignment:\n" <<  zxc << endl;
-    // poi = zxc - qwe;
-    // cout << "subtraction result:\n" << poi << endl;
-    // zxc = qwe * asd;
-    // cout << "multiply result:\n" << zxc << endl;
-    // int multiplier; cout << "enter multiplier: ",  cin >> multiplier;
-    // BigInt rty = asd * multiplier;
-    // cout << "multiplication\n" << asd << "by number: " << multiplier << " equals:\n" << rty << endl;
-    
-    BigInt rty(4,1);
-
-    rty = rty.input(10);
-    // cout << rty;
-    // int devisor; cout << "enter devisor: ",  cin >> devisor;
-    // cout << "devision\n" << rty << "by number: " << devisor << " equals:\n" << (rty / devisor)<< endl;
-    
-    // cout << "devision\n" << rty << "by number: " << devisor << " equals:\n" << (rty % devisor)<< endl;
-    rty.output(10);
+    Test();
     return 0;
 }

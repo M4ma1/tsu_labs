@@ -60,6 +60,7 @@
     "random": "cpp",
     "limits": "cpp",
     "ostream": "cpp",
-    "iostream": "cpp"
+    "iostream": "cpp",
+    "stdexcept": "cpp"
   }
 }

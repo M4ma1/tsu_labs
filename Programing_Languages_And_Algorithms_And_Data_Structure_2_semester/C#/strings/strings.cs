@@ -26,8 +26,8 @@ namespace Rusik
         static int CountCharOccurrences(string str, char c)
         {
             int count = 0;
-            char[] strArray = str.ToCharArray();
-            foreach (char ch in strArray)
+            // char[] strArray = str.ToCharArray();
+            foreach (char ch in str)
             {
                 if (ch == c)
                 {

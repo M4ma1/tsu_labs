@@ -1,0 +1,15 @@
+/home/rus1k/Documents/tsu_labs/Programing_Languages_And_Algorithms_And_Data_Structure_2_semester/C#/merge/bin/Debug/net8.0/merge
+/home/rus1k/Documents/tsu_labs/Programing_Languages_And_Algorithms_And_Data_Structure_2_semester/C#/merge/bin/Debug/net8.0/merge.deps.json
+/home/rus1k/Documents/tsu_labs/Programing_Languages_And_Algorithms_And_Data_Structure_2_semester/C#/merge/bin/Debug/net8.0/merge.runtimeconfig.json
+/home/rus1k/Documents/tsu_labs/Programing_Languages_And_Algorithms_And_Data_Structure_2_semester/C#/merge/bin/Debug/net8.0/merge.dll
+/home/rus1k/Documents/tsu_labs/Programing_Languages_And_Algorithms_And_Data_Structure_2_semester/C#/merge/bin/Debug/net8.0/merge.pdb
+/home/rus1k/Documents/tsu_labs/Programing_Languages_And_Algorithms_And_Data_Structure_2_semester/C#/merge/obj/Debug/net8.0/merge.GeneratedMSBuildEditorConfig.editorconfig
+/home/rus1k/Documents/tsu_labs/Programing_Languages_And_Algorithms_And_Data_Structure_2_semester/C#/merge/obj/Debug/net8.0/merge.AssemblyInfoInputs.cache
+/home/rus1k/Documents/tsu_labs/Programing_Languages_And_Algorithms_And_Data_Structure_2_semester/C#/merge/obj/Debug/net8.0/merge.AssemblyInfo.cs
+/home/rus1k/Documents/tsu_labs/Programing_Languages_And_Algorithms_And_Data_Structure_2_semester/C#/merge/obj/Debug/net8.0/merge.csproj.CoreCompileInputs.cache
+/home/rus1k/Documents/tsu_labs/Programing_Languages_And_Algorithms_And_Data_Structure_2_semester/C#/merge/obj/Debug/net8.0/merge.sourcelink.json
+/home/rus1k/Documents/tsu_labs/Programing_Languages_And_Algorithms_And_Data_Structure_2_semester/C#/merge/obj/Debug/net8.0/merge.dll
+/home/rus1k/Documents/tsu_labs/Programing_Languages_And_Algorithms_And_Data_Structure_2_semester/C#/merge/obj/Debug/net8.0/refint/merge.dll
+/home/rus1k/Documents/tsu_labs/Programing_Languages_And_Algorithms_And_Data_Structure_2_semester/C#/merge/obj/Debug/net8.0/merge.pdb
+/home/rus1k/Documents/tsu_labs/Programing_Languages_And_Algorithms_And_Data_Structure_2_semester/C#/merge/obj/Debug/net8.0/merge.genruntimeconfig.cache
+/home/rus1k/Documents/tsu_labs/Programing_Languages_And_Algorithms_And_Data_Structure_2_semester/C#/merge/obj/Debug/net8.0/ref/merge.dll

@@ -84,7 +84,9 @@ namespace Rusik {
             var circle = new Circle(0, 0, 5);
 
             var circle2 = new Circle(1, 2, 3);
+            var circle3 = new Circle(0,0,3);
             AssertFalse(Circle.equation(circle, circle2));
+            AssertTrue(Circle.equation(circle2, circle3));
         }
 
         private static void TestCircleContainsPoint()
@@ -100,9 +102,14 @@ namespace Rusik {
             var circle1 = new Circle(0, 0, 5);
             var circle2 = new Circle(8, 0, 5);
             var circle3 = new Circle(11, 0, 5);
+            var circle4 = new Circle(0, 6, 1);
+            var circle5 = new Circle(0, 0, 5);
 
             AssertTrue(Circle.intersection(circle1, circle2));
             AssertFalse(Circle.intersection(circle1, circle3));
+            AssertTrue(Circle.intersection(circle1, circle4));
+            AssertTrue(Circle.intersection(circle1, circle5));
+
         }
 
         private static void TestCircleContains()
@@ -182,7 +189,7 @@ namespace Rusik {
             return circle.r == circle2.r;
         }
         public static bool containsPoint(double xPoint, double yPoint, Circle circle){
-            double distance = Math.Sqrt(Math.Pow(xPoint - circle.x, 2) + Math.Pow(yPoint - circle.y, 2));
+            double distance = Math.Sqrt((xPoint - circle.x)*(xPoint - circle.x) + (yPoint - circle.y)*(yPoint - circle.y));
             return distance <= circle.r;
         }
         public static bool intersection(Circle circle1, Circle circle2){
@@ -191,8 +198,14 @@ namespace Rusik {
         }
 
         public static bool contains(Circle circle1, Circle circle2){
-            double d = Math.Sqrt((circle1.x - circle2.x)*(circle1.x - circle2.x) + (circle1.y - circle2.y)*(circle1.y - circle2.y));
-            return circle1.r > d + circle2.r;
+            if (circle1.r > circle2.r){
+                double d = Math.Sqrt((circle1.x - circle2.x)*(circle1.x - circle2.x) + (circle1.y - circle2.y)*(circle1.y - circle2.y));
+                return circle1.r > d + circle2.r;
+            }
+            else{
+                double d = Math.Sqrt((circle2.x - circle1.x)*(circle2.x - circle1.x) + (circle2.y - circle1.y)*(circle2.y - circle1.y));
+                return circle2.r > d + circle1.r;
+            }
         }
 
         public static float radius(Circle circle1, Circle circle2){

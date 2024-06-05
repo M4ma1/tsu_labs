@@ -4,10 +4,11 @@ using namespace std;
 
 class tree_elem
 {
-    public:
+
         int m_data;     //ключ - число, хранящееся в вершине
         tree_elem * m_left;    //указатель на левого потомка данной вершины
         tree_elem * m_right;  //указатель на правого потомка данной вершины
+    public:
         // Конструктор класса
         //Левые и правые поддеревья инициализирует нулевыми указателями
         tree_elem(int val){
@@ -15,21 +16,22 @@ class tree_elem
             m_right = nullptr;
             m_data = val;
         }
+    friend class binary_tree;
 };
 
 class binary_tree
 {
   private:
     tree_elem * m_root;        //указатель на корень дерева
-        int m_size;                       //количество элементов в дереве
-        void print_tree (tree_elem *);   //используется в рекурсивном алгоритме обхода дерева
-        void delete_tree (tree_elem *); //используется в рекурсивном алгоритме удаления в дереве
+    int m_size;                       //количество элементов в дереве
+    void print_tree (tree_elem *);   //используется в рекурсивном алгоритме обхода дерева
+    void delete_tree (tree_elem *); //используется в рекурсивном алгоритме удаления в дереве
     public:
         // binary_tree (int);      //конструктор
 
         binary_tree(int len = 1){                   //конструктор с рандомными значениями
             m_root = new tree_elem(rand() % 100);
-            m_size=0;
+            m_size=1;
             for (int i = 0; i < len; i++) {
                 this -> insert(rand() % 100);
             }
@@ -58,6 +60,8 @@ class binary_tree
         int min(tree_elem *);
         void BFS();
         void LRN(tree_elem *);
+        void printTree();
+        void printTree(tree_elem *, int);
 };
 
 int binary_tree::min(tree_elem *node = nullptr){
@@ -85,7 +89,7 @@ int binary_tree::max(tree_elem *node = nullptr){
 }
 
 binary_tree binary_tree::operator =(const binary_tree &tree){
-    if (this->m_root != tree.m_root && this->m_size != tree.m_size){
+    if (this != &tree){
         delete_tree(m_root);
         m_root = copy(m_root, tree.m_root);
     }
@@ -176,6 +180,26 @@ void binary_tree::print_tree (tree_elem * curr){
     }
 }
 
+void binary_tree::printTree () {
+    if(m_root == nullptr) {
+    cout << "Дерево пустое";
+    return;
+    }
+
+    printTree(m_root, 0);
+}
+
+void binary_tree::printTree (tree_elem *q, int k) {
+    if(q == nullptr) return;
+    printTree(q -> m_right, k + 3);
+    for(int i = 0; i < k; i++) {
+        cout << " ";
+    }
+    cout .width(2);
+    cout << q -> m_data << endl;
+    printTree(q -> m_left, k + 3);
+}
+
 void binary_tree::erase(int key) {
     tree_elem * curr = m_root;
     tree_elem * parent = NULL;
@@ -218,15 +242,19 @@ void binary_tree::erase(int key) {
 
     else{
         curr->m_data = max(curr->m_left);
+        parent = curr;
         curr = curr->m_left;
+        if(parent->m_data == curr->m_data){parent->m_left = curr->m_left;return;}
         while (curr->m_right) {
+            parent = curr;
             curr = curr->m_right;
         }
+        parent->m_right = curr->m_left;
         if (curr) {
             delete curr;
         }
         --m_size;
-        return;
+        return;//tpdp
     }
 
 }
@@ -283,6 +311,8 @@ int main(){
     tree4.print();
     cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
 
+    tree1.printTree();
+
     cout<< "min tree4 = " << tree4.min() << endl;
     cout<< "max tree4 = " << tree4.max() << endl;
     cout<< "search 3 in tree4 = " << tree4.find(3) << endl;
@@ -302,11 +332,11 @@ int main(){
 
     binary_tree tree5(12);
     int key;
-    tree5.print();
+    tree5.printTree();
     cout<< "Enter key: "<< endl;
     cin >> key;
     tree5.erase(key);
-    tree5.print();
+    tree5.printTree();
 
     return 0;
 }
